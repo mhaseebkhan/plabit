@@ -43,6 +43,15 @@ class TransactionTest < Test::Unit::TestCase
     VCR.use_cassette("transactions") do
       get '/transactions'
       assert last_response.ok?
+      assert last_response.body.include?('Transactions Info')
+      assert last_response.body.include?('The table below contains one month previous history.')
+      assert last_response.body.include?('<tr>
+        <th>NAME</th>
+        <th>AMOUNT</th>
+        <th>DATE</th>
+        <th>ADDRESS</th>
+        <th>Recurring</th>
+      </tr>')
     end
   end
 
