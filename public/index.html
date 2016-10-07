@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>PLABIT</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <div class="container">
+    <div class="logo">Plabit</div>
+    <h2>Plabit is a simple web app that gives you access to all your bank accounts</h2>
+    <div class="dual-button">
+      <div>
+        <span class="radio-button radio-left" id="sandboxLinkButton">Sandbox Mode</span>
+      </div>
+      <div>
+        <span class="radio-button radio-right" id="liveLinkButton">Regular Mode</span>
+      </div>
+    </div>
+    
+    <!-- The link-initialize script is loaded from the <body>, not <head> -->
+    <script src="https://cdn.plaid.com/link/stable/link-initialize.js"></script>
+    <script>
+    // This demo uses two custom initializers so that we can provide
+    // both a sandbox and live demo on the same page.
+    // See: https://github.com/plaid/link/blob/master/README.md#step-2-custom-integration
+
+    var sandboxHandler = Plaid.create({
+      clientName: 'SUM',
+      env: 'tartan',
+      product: 'auth',
+      key: 'test_key',
+      onSuccess: function(token) {
+        window.location = '/transactions?public_token=' + token;
+      },
+    });
+
+    var liveHandler = Plaid.create({
+      clientName: 'SUM',
+      env: 'tartan',
+      product: 'auth',
+      key: '35e8986d7be9822f807bce9e9a32ed',
+      onSuccess: function(token) {
+        window.location = '/transactions?public_token=' + token;
+      },
+    });
+
+    // Open the "Institution Select" view using the sandbox Link handler.
+    document.getElementById('sandboxLinkButton').onclick = function() {
+      sandboxHandler.open();
+    };
+
+    // Open the "Institution Select" view using the live Link handler.
+    document.getElementById('liveLinkButton').onclick = function() {
+      liveHandler.open();
+    };
+    </script>
+  </div>
+</body>
+</html>

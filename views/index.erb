@@ -1,0 +1,113 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+
+<body>
+<div class="container">
+  <h2>Transactions Info</h2>
+  <p>The table below contains one month previous history.</p>
+
+
+  <div class="table-responsive">
+    <table class='table table-striped table-bordered table-hover table-condensed'>
+      <thead>
+      <tr>
+        <th>NAME</th>
+        <th>AMOUNT</th>
+        <th style="width:110px;">DATE</th>
+        <th>ADDRESS</th>
+        <th>Recurring</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @transactions.each_with_index do |elem, index| %>
+          <tr>
+            <td>
+              <%= elem.name %>
+              <a class="popoverData" data-transaction='<%= elem.name %>' href="#" rel="popover" data-placement="bottom" data-poload="/companies" data-original-title="<%=elem.name%>">View Info</a>
+            </td>
+            <td>
+              <%= elem.amount %>
+            </td>
+            <td>
+              <%= elem.date  %>
+            </td>
+
+
+            <td>
+              <%= elem.meta[:location]['address'] %>
+              <%= elem.meta[:location]['city'] %>
+              <%= elem.meta[:location]['state'] %>
+              <%= elem.meta[:location]['zip'] %>
+
+            </td>
+            <td><%= elem.category_id == '18061000'? 'Yes' : 'No'%></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+
+<script>
+
+  $('*[data-poload]').mouseenter(function() {
+    var e=$(this);
+    e.off('hover');
+    console.log(e.attr('data-transaction'));
+    e.popover({
+      html: true,
+      content: function(){
+        var div_id =  "tmp-id-" + $.now();
+        var link =  e.data('poload')+"?name="+e.attr('data-transaction');
+        var company = details_in_popup(link,div_id);
+        console.log('ajax return '+company);
+        return company;
+      }
+    }).popover('show');
+  });
+
+  function details_in_popup(link,div_id){
+    $.ajax({
+      url: link,
+      success: function(response) {
+        //console.log(response)
+        var companies = response.company
+        //console.log(companies)
+        if (typeof companies == "string") {
+          $('#' + div_id).html(companies);
+        }
+        else {
+          var logo = companies.logo + "?size=30"
+          $('#' + div_id).html("<a href=" + companies.domain + ">" + companies.name + "</a><img style='margin-left: 20px' src='" + logo + "'><br><b>Phone:</b>" + companies.phone + "<br><b>Category:</b>" + companies.category.industry);
+        }
+      }
+    });
+    return '<div id="'+ div_id +'">Loading...</div>';
+  }
+
+  $('*[data-poload]').mouseleave(function() {
+    var e=$(this);
+    e.popover('hide')
+    $('.popover').popover('hide');
+  });
+
+ </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
