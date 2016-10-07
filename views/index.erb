@@ -26,7 +26,7 @@
           <tr>
             <td>
               <%= elem.name %>
-              <a class="popoverData" data-transaction='<%= elem.name %>' href="#" rel="popover" data-placement="bottom" data-poload="/companies" data-original-title="<%=elem.name%>">View Info</a>
+              <a class="popoverData" data-transaction='<%= elem.name %>' href="javascript:void(0)" rel="popover" data-placement="bottom" data-poload="/companies" data-original-title="<%=elem.name%>">View Info</a>
             </td>
             <td>
               <%= elem.amount %>
@@ -54,21 +54,17 @@
 
 <script>
 
-  $('*[data-poload]').mouseenter(function() {
-    var e=$(this);
-    e.off('hover');
-    console.log(e.attr('data-transaction'));
-    e.popover({
-      html: true,
-      content: function(){
-        var div_id =  "tmp-id-" + $.now();
-        var link =  e.data('poload')+"?name="+e.attr('data-transaction');
-        var company = details_in_popup(link,div_id);
-        console.log('ajax return '+company);
-        return company;
-      }
-    }).popover('show');
-  });
+  $(".popoverData").popover({
+    html: true,
+    trigger: 'focus',
+    content: function(){
+      var div_id =  "tmp-id-" + $.now();
+      var link =  $(this).data('poload')+"?name="+$(this).attr('data-transaction');
+      var company = details_in_popup(link,div_id);
+      console.log('ajax return '+company);
+      return company;
+    }
+  })
 
   function details_in_popup(link,div_id){
     $.ajax({
@@ -81,19 +77,14 @@
           $('#' + div_id).html(companies);
         }
         else {
-          var logo = companies.logo + "?size=30"
-          $('#' + div_id).html("<a href=" + companies.domain + ">" + companies.name + "</a><img style='margin-left: 20px' src='" + logo + "'><br><b>Phone:</b>" + companies.phone + "<br><b>Category:</b>" + companies.category.industry);
+          var logo = (companies.logo) ? companies.logo : '/default-placeholder.png';
+          $('#' + div_id).html("<a target='_blank' href='http://" + companies.domain + "'>" + companies.name + "</a><img alt='N/A' width='30' height='30' style='margin-left: 20px' src='" + logo + "'><br><b>Phone: </b>" + companies.phone + "<br><b>Category: </b>" + companies.category.industry);
         }
       }
     });
     return '<div id="'+ div_id +'">Loading...</div>';
   }
 
-  $('*[data-poload]').mouseleave(function() {
-    var e=$(this);
-    e.popover('hide')
-    $('.popover').popover('hide');
-  });
 
  </script>
 

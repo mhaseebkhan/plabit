@@ -7,6 +7,10 @@ require 'json'
 require 'uri'
 require 'open-uri'
 
+unless Sinatra::Base.production?
+  require "dotenv"
+  Dotenv.load
+end
 Dir.glob(File.join("helpers", "**", "*.rb")).each do |helper|
   require_relative helper
 end
