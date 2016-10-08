@@ -1,8 +1,7 @@
 require "bundler/setup"
 require "sinatra"
 require "rack/csrf"
-require 'plaid'
-require 'clearbit'
+require_relative "config"
 require 'json'
 require 'uri'
 require 'open-uri'
@@ -19,14 +18,6 @@ require "sinatra/reloader" if development?
 
 # use Rack::Session::Cookie, :secret => "TODO: CHANGE ME"
 # use Rack::Csrf, :raise => true
-
-Plaid.config do |p|
-  p.client_id = ENV['PLAID_CLIENT_ID']
-  p.secret = ENV['PLAID_SECRET']
-  p.env = :tartan
-end
-
-Clearbit.key = ENV['CLEARBIT_KEY']
 
 get '/' do
   send_file File.join(settings.public_folder, 'index.html')
